@@ -1,0 +1,22 @@
+{
+    "model_name": "Gradient Boosting Regressor Prediksi Debit Sungai H+1",
+    "algorithm": "GradientBoostingRegressor",
+    "created_at": "2026-10-12 10:32:14",
+    "metrics_test": {
+        "MAE_m3s": 5.275,
+        "RMSE_m3s": 9.7254,
+        "R2_Score": 0.8704
+    },
+    "data_range": {
+        "train_start": "2025-10-19",
+        "train_end": "2026-07-29",
+        "test_start": "2026-07-30",
+        "test_end": "2026-10-08"
+    },
+    "hyperparameters": {
+        "n_estimators": 100,
+        "learning_rate": 0.05,
+        "max_depth": 5,
+        "subsample": 0.8
+    }
+}

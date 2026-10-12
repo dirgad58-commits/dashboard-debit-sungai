@@ -1,0 +1,7 @@
+location_id,city_name,river_name,province,latitude,longitude,elevation_m,population
+BJM,Banjarmasin,Martapura,Kalimantan Selatan,-3.31987,114.59075,8.0,657663
+BKS,Kota Bekasi,Cikeas,Jawa Barat,-6.2349,106.9896,18.0,2564940
+JKT,Jakarta,Ciliwung,Jakarta,-6.21462,106.84513,16.0,8540121
+PTK,Kota Pontianak,Kapuas,Kalimantan Barat,-0.03194,109.325,2.0,658685
+SMD,Kota Samarinda,Mahakam,Kalimantan Timur,-0.49167,117.14583,24.0,831460
+SMG,Kota Semarang,Banjir Kanal Barat,Jawa Tengah,-6.99306,110.42083,18.0,1653524

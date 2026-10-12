@@ -1,0 +1,47 @@
+{
+    "model_name": "RandomForestRegressor",
+    "trained_at": "2026-10-12T16:59:46.836332",
+    "features": [
+        "log_q",
+        "q_diff1",
+        "q_roll_mean7",
+        "q_roll_std7",
+        "log_q_lag_1",
+        "log_q_lag_2",
+        "log_q_lag_3",
+        "log_q_lag_7",
+        "rain_mm",
+        "rain_lag_1",
+        "rain_lag_2",
+        "rain_sum_3d",
+        "rain_sum_7d",
+        "bulan_sin",
+        "bulan_cos",
+        "loc_BJM",
+        "loc_BKS",
+        "loc_JKT",
+        "loc_PTK",
+        "loc_SMD",
+        "loc_SMG"
+    ],
+    "p90_thresholds_m3s": {
+        "BJM": 303.79,
+        "BKS": 55.1,
+        "JKT": 58.16,
+        "PTK": 628.51,
+        "SMD": 22.6,
+        "SMG": 18.63
+    },
+    "test_metrics": {
+        "Model": "Model AI Terpilih (Test Set)",
+        "MAE (m3/s)": 2.379,
+        "RMSE (m3/s)": 5.951,
+        "R2 Score": 0.9585,
+        "MAE Pct (%)": 14.43
+    },
+    "data_period": {
+        "start": "2025-10-19",
+        "end": "2026-10-11"
+    },
+    "target_variable": "log1p(discharge_m3s_next_day)"
+}

@@ -1,0 +1,56 @@
+{
+    "Banjarmasin": {
+        "location_id": "BJM",
+        "latitude": -3.31987,
+        "longitude": 114.59075,
+        "elevation_m": 8.0,
+        "threshold_p90_m3s": 283.838,
+        "debit_normal_mean": 149.14957746478876,
+        "debit_historis_max": 689.24
+    },
+    "Kota Pontianak": {
+        "location_id": "PTK",
+        "latitude": -0.03194,
+        "longitude": 109.325,
+        "elevation_m": 2.0,
+        "threshold_p90_m3s": 605.182,
+        "debit_normal_mean": 268.0680281690141,
+        "debit_historis_max": 798.83
+    },
+    "Kota Bekasi": {
+        "location_id": "BKS",
+        "latitude": -6.2349,
+        "longitude": 106.9896,
+        "elevation_m": 18.0,
+        "threshold_p90_m3s": 49.58400000000001,
+        "debit_normal_mean": 25.204140845070427,
+        "debit_historis_max": 117.3
+    },
+    "Kota Samarinda": {
+        "location_id": "SMD",
+        "latitude": -0.49167,
+        "longitude": 117.14583,
+        "elevation_m": 24.0,
+        "threshold_p90_m3s": 21.848,
+        "debit_normal_mean": 11.833718309859156,
+        "debit_historis_max": 28.99
+    },
+    "Kota Semarang": {
+        "location_id": "SMG",
+        "latitude": -6.99306,
+        "longitude": 110.42083,
+        "elevation_m": 18.0,
+        "threshold_p90_m3s": 17.278000000000002,
+        "debit_normal_mean": 8.203943661971831,
+        "debit_historis_max": 27.84
+    },
+    "Jakarta": {
+        "location_id": "JKT",
+        "latitude": -6.21462,
+        "longitude": 106.84513,
+        "elevation_m": 16.0,
+        "threshold_p90_m3s": 55.516000000000005,
+        "debit_normal_mean": 27.895830985915495,
+        "debit_historis_max": 150.36
+    }
+}

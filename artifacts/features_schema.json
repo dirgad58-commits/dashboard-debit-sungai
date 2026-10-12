@@ -1,0 +1,21 @@
+{
+    "feature_names": [
+        "discharge_lag1",
+        "discharge_lag2",
+        "discharge_lag3",
+        "discharge_roll7",
+        "rain_mm",
+        "rain_lag1",
+        "rain_lag2",
+        "rain_roll3",
+        "rain_roll7",
+        "elevation_m",
+        "latitude",
+        "longitude",
+        "bulan_sin",
+        "bulan_cos",
+        "musim_hujan"
+    ],
+    "target_column": "discharge_next_day",
+    "n_features": 15
+}
