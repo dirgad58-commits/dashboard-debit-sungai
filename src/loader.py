@@ -1,10 +1,23 @@
 # src/loader.py - Data & Model Artifact Loader
 import json
 import pickle
+import sys
 import os
 from pathlib import Path
+import numpy as np
 import pandas as pd
 import streamlit as st
+
+# Compatibility alias: allow unpickling NumPy 2.x serialized models in NumPy 1.x environments
+try:
+    import numpy._core
+except ModuleNotFoundError:
+    try:
+        import numpy.core as _core
+        sys.modules["numpy._core"] = _core
+        sys.modules["numpy._core.multiarray"] = _core.multiarray
+    except Exception:
+        pass
 
 ART_DIR = Path(__file__).resolve().parent.parent / "artifacts"
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -13,12 +26,23 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 @st.cache_resource(show_spinner="Memuat model inferensi...")
 def load_gbr_model():
     model_path = ART_DIR / "flood_discharge_gbr.pkl"
-    if not model_path.exists():
-        model_path = ART_DIR / "model_debit_sungai.joblib"
+    if model_path.exists():
+        try:
+            with open(model_path, "rb") as f:
+                return pickle.load(f)
+        except Exception:
+            try:
+                import joblib
+                return joblib.load(model_path)
+            except Exception:
+                pass
+
+    joblib_path = ART_DIR / "model_debit_sungai.joblib"
+    if joblib_path.exists():
         import joblib
-        return joblib.load(model_path)
-    with open(model_path, "rb") as f:
-        return pickle.load(f)
+        return joblib.load(joblib_path)
+
+    raise FileNotFoundError("Artefak model inferensi tidak ditemukan di direktori artifacts.")
 
 
 @st.cache_data
