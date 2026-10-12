@@ -5,8 +5,6 @@ import os
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-import sqlalchemy as sa
-from sqlalchemy import create_engine, text
 
 ART_DIR = Path(__file__).resolve().parent.parent / "artifacts"
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -48,6 +46,7 @@ def load_model_metadata() -> dict:
 def load_dataset(use_mysql: bool = False, mysql_uri: str = "mysql+pymysql://root:rootpassword@localhost:3306/banjir_db"):
     if use_mysql:
         try:
+            from sqlalchemy import create_engine
             engine = create_engine(mysql_uri)
             with engine.connect() as conn:
                 df_dis = pd.read_sql("SELECT * FROM river_discharge", conn)
@@ -58,8 +57,8 @@ def load_dataset(use_mysql: bool = False, mysql_uri: str = "mysql+pymysql://root
                 df_merge.rename(columns={"obs_date": "date", "location_id": "loc"}, inplace=True)
                 df_merge["date"] = pd.to_datetime(df_merge["date"])
                 return df_merge, "MySQL (Connected)"
-        except Exception as e:
-            pass  # Fallback to CSV
+        except Exception:
+            pass  # Fallback to CSV seamlessly
 
     csv_path = DATA_DIR / "riwayat_debit_hujan.csv"
     df = pd.read_csv(csv_path, parse_dates=["date"])
