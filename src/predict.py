@@ -1,44 +1,74 @@
-# src/predict.py
+# src/predict.py - Dynamic Feature Calculation & Inference
 import numpy as np
 import pandas as pd
 
-from .features import build_features
 
+def predict_from_user_inputs(
+    model,
+    city_threshold_data: dict,
+    discharge_lag1: float,
+    discharge_lag2: float,
+    discharge_lag3: float,
+    discharge_roll7: float,
+    rain_mm: float,
+    rain_lag1: float,
+    rain_lag2: float,
+    rain_roll3: float,
+    rain_roll7: float,
+    month: int,
+    feature_order: list[str]
+) -> dict:
+    city_info = city_threshold_data
+    elevation_m = float(city_info["elevation_m"])
+    latitude = float(city_info["latitude"])
+    longitude = float(city_info["longitude"])
+    threshold_p90 = float(city_info["threshold_p90_m3s"])
 
-def predict_next_day(model, meta: dict, df_loc: pd.DataFrame, loc: str) -> dict:
-    feats = build_features(df_loc, loc, meta["features"]).dropna()
-    if feats.empty:
-        raise ValueError("Riwayat data belum cukup (butuh minimal ±8 hari berurutan).")
+    bulan_sin = float(np.sin(2 * np.pi * month / 12))
+    bulan_cos = float(np.cos(2 * np.pi * month / 12))
+    musim_hujan = 1 if (month >= 10 or month <= 4) else 0
 
-    x_last = feats.iloc[[-1]]                       # baris terbaru
-    pred_log = model.predict(x_last)[0]
-    pred_q = float(np.expm1(pred_log))              # kembalikan dari log1p
-
-    thr = meta["p90_thresholds_m3s"][loc]
-    rasio = pred_q / thr
-
-    if rasio >= 1.0:
-        status, warna = "WASPADA — di atas ambang P90", "red"
-    elif rasio >= 0.8:
-        status, warna = "SIAGA — mendekati ambang P90", "orange"
-    else:
-        status, warna = "NORMAL", "green"
-
-    return {
-        "tanggal_basis": feats.index[-1],
-        "tanggal_prediksi": feats.index[-1] + pd.Timedelta(days=1),
-        "prediksi_m3s": pred_q,
-        "ambang_p90": thr,
-        "rasio": rasio,
-        "status": status,
-        "warna": warna,
+    input_payload = {
+        "discharge_lag1": discharge_lag1,
+        "discharge_lag2": discharge_lag2,
+        "discharge_lag3": discharge_lag3,
+        "discharge_roll7": discharge_roll7,
+        "rain_mm": rain_mm,
+        "rain_lag1": rain_lag1,
+        "rain_lag2": rain_lag2,
+        "rain_roll3": rain_roll3,
+        "rain_roll7": rain_roll7,
+        "elevation_m": elevation_m,
+        "latitude": latitude,
+        "longitude": longitude,
+        "bulan_sin": bulan_sin,
+        "bulan_cos": bulan_cos,
+        "musim_hujan": musim_hujan
     }
 
+    df_sample = pd.DataFrame([input_payload])[feature_order]
+    pred_discharge = float(model.predict(df_sample)[0])
 
-def predict_history(model, meta: dict, df_loc: pd.DataFrame, loc: str) -> pd.DataFrame:
-    """Prediksi untuk semua tanggal historis (untuk grafik aktual vs prediksi)."""
-    feats = build_features(df_loc, loc, meta["features"]).dropna()
-    pred = np.expm1(model.predict(feats))
-    out = pd.DataFrame({"prediksi_hari_berikutnya": pred}, index=feats.index)
-    out.index = out.index + pd.Timedelta(days=1)    # geser: prediksi untuk H+1
-    return out
+    ratio = pred_discharge / threshold_p90 if threshold_p90 > 0 else 0
+    if ratio >= 1.0:
+        status = "CRITICAL"
+        title = f"Peringatan Luapan Banjir (Debit Prediksi: {pred_discharge:.2f} m³/s)"
+        desc = f"Debit diperkirakan melampaui ambang batas siaga P90 ({threshold_p90:.2f} m³/s). Diperlukan aktivasi protokol darurat evakuasi dan pengoperasian pompa retensi."
+    elif ratio >= 0.8:
+        status = "WARNING"
+        title = f"Siaga Waspada Peningkatan Debit (Debit Prediksi: {pred_discharge:.2f} m³/s)"
+        desc = f"Debit berada pada {ratio*100:.1f}% dari ambang batas siaga P90 ({threshold_p90:.2f} m³/s). Waspadai kenaikan muka air dalam 24 jam ke depan."
+    else:
+        status = "NORMAL"
+        title = f"Kondisi Aliran Sungai Normal (Debit Prediksi: {pred_discharge:.2f} m³/s)"
+        desc = f"Debit berada dalam batas kapasitas aman DAS ({ratio*100:.1f}% dari ambang P90: {threshold_p90:.2f} m³/s). Operasi sungai berjalan standar."
+
+    return {
+        "prediction_m3s": pred_discharge,
+        "threshold_p90": threshold_p90,
+        "ratio": ratio,
+        "status": status,
+        "title": title,
+        "description": desc,
+        "input_features": input_payload
+    }
